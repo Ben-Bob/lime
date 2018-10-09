@@ -1,0 +1,25 @@
+% 2018-10-09 test the .ipnb file, can find the problem when run on local computer
+# running the text prediction tutorial
+Because the source code running environment is different, some code become can't be compiler.
+Solution: read the source code, and debug the the bugs.
+
+I find the solution about debug on github issues.
+  - maybe the solution is not explicitly shown, but some people solve it.
+  - The error is: TypeError: object of type 'NoneType' has no len()
+  
+ By looking in the source code for sklearn.feature_extraction.text.CountVectorizer, I found they were using the regex r"(?u)\b\w\w+\b" in their tokenizer and this allowed me a work around by doing
+
+tokenizer = lambda doc: re.compile(r"(?u)\b\w\w+\b").findall(doc)
+explainer = LimeTextExplainer(class_names=class_names, split_expression=tokenizer)
+exp = explainer.explain_instance(newsgroups_test.data[idx], c.predict_proba, num_features=6)
+
+# finally I use this solution to the source code, and can runing it.
+
+
+from lime.lime_text import LimeTextExplainer
+#explainer = LimeTextExplainer(class_names=class_names)
+tokenizer = lambda doc: re.compile(r"(?u)\b\w\w+\b").findall(doc)
+explainer = LimeTextExplainer(class_names=class_names, split_expression=tokenizer)
+  
+  
+  whole document see Lime - basic usage, two class case-zbb test.ipynb
